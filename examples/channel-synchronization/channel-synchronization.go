@@ -1,6 +1,6 @@
-// 我们可以使用通道来同步协程之间的执行状态。
-// 这儿有一个例子，使用阻塞接收的方式，实现了等待另一个协程完成。
-// 如果需要等待多个协程，[WaitGroup](waitgroups) 是一个更好的选择。
+// We can use channels to synchronize the execution state.
+// There is an example here. The method of blocking reception is used to wait for another coroutine to complete.
+// If you need to wait for multiple coroutines, [Waitgroup] (Waitgroups) is a better choice.
 
 package main
 
@@ -9,23 +9,23 @@ import (
 	"time"
 )
 
-// 我们将要在协程中运行这个函数。
-// `done` 通道将被用于通知其他协程这个函数已经完成工作。
+// We will run this function in the coroutine.
+// `Done` channels will be used to notify other corporate functions that have been completed.
 func worker(done chan bool) {
 	fmt.Print("working...")
 	time.Sleep(time.Second)
 	fmt.Println("done")
 
-	// 发送一个值来通知我们已经完工啦。
+	// Send a value to inform us that we are completed.
 	done <- true
 }
 
 func main() {
 
-	// 运行一个 worker 协程，并给予用于通知的通道。
+	// Run a worker coroutine and give a channel for notification.
 	done := make(chan bool, 1)
 	go worker(done)
 
-	// 程序将一直阻塞，直至收到 worker 使用通道发送的通知。
+	// The program will always be blocked until the notice sent by the channel uses channel.
 	<-done
 }

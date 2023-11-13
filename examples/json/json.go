@@ -1,5 +1,5 @@
-// Go 提供内建的 JSON 编码解码（序列化反序列化）支持，
-// 包括内建及自定义类型与 JSON 数据之间的转化。
+// GO provides a built -in JSON coding decoding (serialized derivative) support,
+// Including the conversion between built -in and custom types and JSON data.
 
 package main
 
@@ -9,13 +9,13 @@ import (
 	"os"
 )
 
-// 下面我们将使用这两个结构体来演示自定义类型的编码和解码。
+// Below we will use these two structures to demonstrate the coding and decoding of custom types.
 type response1 struct {
 	Page   int
 	Fruits []string
 }
 
-// 只有 `可导出` 的字段才会被 JSON 编码/解码。必须以大写字母开头的字段才是可导出的。
+// Only the field that can be exported will be encoded/decoded by JSON.The fields that must start with uppercase letters are exported.
 type response2 struct {
 	Page   int      `json:"page"`
 	Fruits []string `json:"fruits"`
@@ -23,8 +23,8 @@ type response2 struct {
 
 func main() {
 
-	// 首先我们来看一下基本数据类型到 JSON 字符串的编码过程。
-	// 这是一些原子值的例子。
+// First of all, let's take a look at the encoding process of the basic data type to the JSON string.
+// This is an example of some atomic values.
 	bolB, _ := json.Marshal(true)
 	fmt.Println(string(bolB))
 
@@ -37,7 +37,7 @@ func main() {
 	strB, _ := json.Marshal("gopher")
 	fmt.Println(string(strB))
 
-	// 这是一些切片和 map 编码成 JSON 数组和对象的例子。
+// This is an example of some slices and maps into JSON array and objects.
 	slcD := []string{"apple", "peach", "pear"}
 	slcB, _ := json.Marshal(slcD)
 	fmt.Println(string(slcB))
@@ -46,59 +46,59 @@ func main() {
 	mapB, _ := json.Marshal(mapD)
 	fmt.Println(string(mapB))
 
-	// JSON 包可以自动的编码你的自定义类型。
-	// 编码的输出只包含可导出的字段，并且默认使用字段名作为 JSON 数据的键名。
+// The json package can automatically encode your custom type.
+// Code output only contains exportable fields, and uses field names as key names of JSON data by default.
 	res1D := &response1{
 		Page:   1,
 		Fruits: []string{"apple", "peach", "pear"}}
 	res1B, _ := json.Marshal(res1D)
 	fmt.Println(string(res1B))
 
-	// 你可以给结构字段声明标签来自定义编码的 JSON 数据的键名。
-	// 上面 `Response2` 的定义，就是这种标签的一个例子。
+// You can declare the key name of the JSON data that defines the coding of the structural field.
+// The definition of the above `response2` is an example of this label.
 	res2D := &response2{
 		Page:   1,
 		Fruits: []string{"apple", "peach", "pear"}}
 	res2B, _ := json.Marshal(res2D)
 	fmt.Println(string(res2B))
 
-	// 现在来看看将  JSON 数据解码为 Go 值的过程。
-	// 这是一个普通数据结构的解码例子。
+// Now let's take a look at the process of decoding JSON data to go value.
+// This is an example of an ordinary data structure.
 	byt := []byte(`{"num":6.13,"strs":["a","b"]}`)
 
-	// 我们需要提供一个 JSON 包可以存放解码数据的变量。
-	// 这里的 `map[string]interface{}` 是一个键为 string，值为任意值的 map。
+// We need to provide a variable that can store decoding data.
+// The `Map [String] interface {}` is a Map with a key that is string and a value of any value.
 	var dat map[string]interface{}
 
-	// 这是实际的解码，以及相关错误的检查。
+// This is the actual decoding and related errors.
 	if err := json.Unmarshal(byt, &dat); err != nil {
 		panic(err)
 	}
 	fmt.Println(dat)
 
-	// 为了使用解码 map 中的值，我们需要将他们进行适当的类型转换。
-	// 例如，这里我们将 `num` 的值转换成 `float64` 类型。
+// In order to use the value in MAP, we need to transform them appropriately.
+// For example, here we convert the value of `NUM` into types of` Float64.
 	num := dat["num"].(float64)
 	fmt.Println(num)
 
-	// 访问嵌套的值需要一系列的转化。
+// The value of accessing nested requires a series of conversion.
 	strs := dat["strs"].([]interface{})
 	str1 := strs[0].(string)
 	fmt.Println(str1)
 
-	// 我们还可以将 JSON 解码为自定义数据类型。
-	// 这样做的好处是，可以为我们的程序增加附加的类型安全性，
-	// 并在访问解码后的数据时不需要类型断言。
+// We can also decod in JSON into custom data types.
+// The advantage of doing this is that it can add additional type of security to our procedures.
+// Do not need type assertions when accessing the data after accessing the decoding.
 	str := `{"page": 1, "fruits": ["apple", "peach"]}`
 	res := response2{}
 	json.Unmarshal([]byte(str), &res)
 	fmt.Println(res)
 	fmt.Println(res.Fruits[0])
 
-	// 在上面例子的标准输出上，
-	// 我们总是使用 byte和 string 作为数据和 JSON 表示形式之间的中介。
-	// 当然，我们也可以像 `os.Stdout` 一样直接将 JSON 编码流传输到
-	// `os.Writer` 甚至 HTTP 响应体。
+// On the standard output of the above example,
+// We always use Byte and String as an intermediary between data and JSON.
+// Of course, we can also pass the JSON coding directly like `os.stdout`
+// `os.writer` and even HTTP response.
 	enc := json.NewEncoder(os.Stdout)
 	d := map[string]int{"apple": 5, "lettuce": 7}
 	enc.Encode(d)
